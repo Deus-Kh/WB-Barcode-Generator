@@ -1,0 +1,22 @@
+{
+  "name": "pdf-generator-server",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bwip-js": "^4.7.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "fontkit": "^2.0.4",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.10",
+    "pdf-lib": "^1.17.1",
+    "sharp": "^0.34.3"
+  }
+}
