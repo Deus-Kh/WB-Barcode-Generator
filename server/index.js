@@ -7,6 +7,8 @@ const path = require('path');
 const sharp = require('sharp');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const bwipjs = require('bwip-js');
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const PORT = 3001;
@@ -265,7 +267,7 @@ console.log("Top:", marginTop);
       throw new Error('Failed to save PDF file');
     }
 
-    res.json({ url: `http://localhost:${PORT}/product.pdf` });
+    res.json({ url: `${process.env.BASE_URL}/product.pdf` });
   } catch (err) {
     console.error('PDF generation error:', err.message, err.stack);
     res.status(500).send(`PDF generation failed: ${err.message}`);
