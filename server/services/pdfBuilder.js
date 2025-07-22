@@ -7,6 +7,7 @@ const fsPromises = fs.promises;
 const path = require('path');
 const sharp = require('sharp');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
+const fontkit = require('@pdf-lib/fontkit');
 const bwipjs = require('bwip-js');
 const mmToPt = mm => mm * 2.8346456693;
 
@@ -24,7 +25,7 @@ module.exports = async function pdfBuilder(req) {
         country,
         brand,
         customText,
-        font = 'Helvetica',
+        font ,
         widthMm,
         heightMm,
         showColor,
@@ -39,7 +40,8 @@ module.exports = async function pdfBuilder(req) {
         logoXPercent,
         logoYPercent,
         logoWidth,
-        frame
+        frame,
+        
     } = req.body;
 
     // Валидация входных данных
@@ -52,11 +54,16 @@ module.exports = async function pdfBuilder(req) {
     }
 
     const pdfDoc = await PDFDocument.create();
+    
     const page = pdfDoc.addPage([mmToPt(widthMMNum), mmToPt(heightMMNum)]);
     const { width, height } = page.getSize();
 
     // Используем стандартный шрифт Helvetica
-    const fontRef = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    // const fontRef = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    pdfDoc.registerFontkit(fontkit);
+    const fontBytes =  fs.readFileSync(`./fonts/${font}`);
+    const fontRef = await pdfDoc.embedFont(fontBytes);
+
 
     //Calculating data
     const lines = [];

@@ -11,7 +11,7 @@ const PORT = 3001;
 
 
 // Проверка и создание папки uploads
-const uploadDir = path.join(__dirname, 'Uploads');
+const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
@@ -20,7 +20,7 @@ if (!fs.existsSync(uploadDir)) {
 
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'Uploads/'),
+  destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
 });
 const upload = multer({
@@ -40,6 +40,11 @@ app.use(express.static('public'));
 // Эндпоинт для получения списка рамок
 const framesRoute = require('./routes/frames')
 app.use('/frames', framesRoute);
+
+//Fonts
+const fonts = require('./routes/fonts') 
+app.use('/fonts', fonts);
+
 
 //PDF denetarion
 const generatePDF = require('./routes/generate-pdf')

@@ -53,6 +53,7 @@ function App() {
     logoYPercent: 0,
     logoWidth: 10,
     frame: 'None',
+    font:'arial.ttf',
     widthMm: 58,
     heightMm: 40,
   });
@@ -60,6 +61,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [frameOptions, setFrameOptions] = useState([{ value: 'None', label: 'No Frame' }]);
+  const [fontOptions, setFontOptions] = useState([{value:"arial.ttf",label:"Arial"}]);
   const [logoPreview, setLogoPreview] = useState(null);
   const canvasRef = useRef(null);
 
@@ -75,7 +77,18 @@ function App() {
         setError(`Error loading frames: ${err.message}`);
       }
     };
+    const fetchFonts = async () => {
+      try {
+        const res = await fetch(REACT_APP_SERVER_URL+'/fonts');
+        if (!res.ok) throw new Error('Failed to load fonts');
+        const fonts = await res.json();
+        setFontOptions(fonts);
+      } catch (err) {
+        setError(`Error loading fonts: ${err.message}`);
+      }
+    };
     fetchFrames();
+    fetchFonts();
   }, []);
 
   // Live Preview рендеринг
@@ -249,7 +262,7 @@ function App() {
       const logoWidth = parseFloat(value) || 10;
       setFormData({ ...formData, logoWidth: Math.max(5, Math.min(logoWidth, formData.widthMm)) });
     } else {
-      const sanitizedValue = type === 'text' ? value.replace(/[^ -~]/g, '') : value;
+      const sanitizedValue = type === 'text' ? value : value;
       setFormData({ ...formData, [name]: sanitizedValue });
     }
   };
@@ -440,6 +453,16 @@ function App() {
             <label>Frame: </label>
             <select name="frame" value={formData.frame} onChange={handleChange}>
               {frameOptions.map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Font: </label>
+            <select name="font" value={formData.font} onChange={handleChange}>
+              {fontOptions.map((option, index) => (
                 <option key={index} value={option.value}>
                   {option.label}
                 </option>
