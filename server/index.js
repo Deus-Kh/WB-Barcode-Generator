@@ -7,7 +7,7 @@ const path = require('path');
 const sharp = require('sharp');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const bwipjs = require('bwip-js');
-import dotenv from "dotenv";
+const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
