@@ -81,7 +81,7 @@ module.exports = async function pdfBuilder(req) {
 
     const lineCount = lines.length;
     const marginTop = Math.min(5, Math.max(2, heightMMNum / (lineCount + 1)));
-    console.log("Top:", marginTop);
+    // console.log("Top:", marginTop);
 
 
 
@@ -92,6 +92,8 @@ module.exports = async function pdfBuilder(req) {
     }
 
     const barcodeScale = heightMMNum < 30 ? 0.25 : 0.4; // 0.3 при heightMm < 30, иначе 0.4
+    console.log("height",heightMMNum);
+    
     const barcodeBuffer = await bwipjs.toBuffer({
         bcid: barcodeType,
         text: barcodeValue,
@@ -105,7 +107,7 @@ module.exports = async function pdfBuilder(req) {
     const barcodeImage = await pdfDoc.embedPng(barcodeBuffer);
     const barcodeDims = barcodeImage.scale(barcodeScale);
     const barcodeY = heightMMNum < 30 ? height - mmToPt(marginTop) / 2.25 - barcodeDims.height : height - mmToPt(marginTop) - barcodeDims.height;
-    console.log(barcodeY);
+    console.log(marginTop);
 
     page.drawImage(barcodeImage, {
         x: width / 2 - barcodeDims.width / 2,
@@ -118,8 +120,8 @@ module.exports = async function pdfBuilder(req) {
 
     // Текст (только латинские символы)
 
-    const availableHeight = height - barcodeY - mmToPt(marginTop); // Доступная высота для текста
-    const fontSize = heightMMNum < 30 ? Math.max(5, Math.min(10, availableHeight / (lineCount))) : Math.min(8, availableHeight / (lineCount) * 1.2); // Мин 6pt, макс 10pt
+    const availableHeight = height - barcodeY -mmToPt(marginTop); // Доступная высота для текста
+    const fontSize = heightMMNum < 30 ? Math.max(5, Math.min(10, availableHeight / (lineCount))) : Math.max(5,Math.min(8, availableHeight / (lineCount) * 1.2)); // Мин 6pt, макс 10pt
     console.log("fontSize", fontSize);
 
     // Отрисовка текста
@@ -127,7 +129,7 @@ module.exports = async function pdfBuilder(req) {
     lines.forEach(line => {
 
         page.drawText(line, {
-            x: mmToPt(widthMMNum / 10),
+            x: mmToPt(widthMMNum / 9.8),
             y: textY,
             size: fontSize,
             font: fontRef,

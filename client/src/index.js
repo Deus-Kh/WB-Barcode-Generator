@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import AppOld from './AppOld';
 import App from './App';
+import AppAI from './AppAI';
 import reportWebVitals from './reportWebVitals';
 // import dotenv from 'dotenv';
 
@@ -10,7 +12,9 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <App /> */}
+    <AppOld />
+    {/* <AppAI /> */}
   </React.StrictMode>
 );
 

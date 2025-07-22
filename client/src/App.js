@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import bwipjs from 'bwip-js';
+import MyForm from './components/MyForm';
 // import dotenv from 'dotenv';
 
 // dotenv.config();
@@ -348,202 +349,228 @@ function App() {
   };
 
   return (
+
     <div style={{ padding: '2rem', fontFamily: 'sans-serif', display: 'flex', gap: '2rem' }}>
-      <div style={{ flex: 1 }}>
-        <h1>PDF Generator</h1>
-        {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
-        <form onSubmit={(e) => handleSubmit(e, false)}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1em' }}>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Barcode Type: </label>
-              <select name="barcodeType" value={formData.barcodeType} onChange={handleChange}>
-                <option value="code128">Code128</option>
-                <option value="ean13">EAN-13</option>
-                <option value="ean8">EAN-8</option>
-                <option value="upc">UPC</option>
-              </select>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Barcode Value: <input name="barcodeValue" placeholder="Barcode value" value={formData.barcodeValue} onChange={handleChange} required /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Seller: <input name="seller" placeholder="Seller" value={formData.seller} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Product Name: <input name="productName" placeholder="Product name" value={formData.productName} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Article: <input name="article" placeholder="Article" value={formData.article} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Color: <input name="color" placeholder="Color" value={formData.color} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Size: <input name="size" placeholder="Size" value={formData.size} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Expiration Date: <input name="expirationDate" placeholder="Expiration Date" value={formData.expirationDate} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Country: <input name="country" placeholder="Country" value={formData.country} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Brand: <input name="brand" placeholder="Brand" value={formData.brand} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Custom Text: <input name="customText" placeholder="Custom text" value={formData.customText} onChange={handleChange} /></label>
-            </div>
+          <div style={{ flex: 1 }}>
+            <h1>PDF Generator Antd</h1>
+            {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+            <MyForm/>
+            {/* <FormComponent
+              formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              isLoading={isLoading}
+              frameOptions={frameOptions}
+              fontOptions={fontOptions }
+            /> */}
           </div>
-          <div style={{ display: 'flex', gap: '1em' }}>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showSeller" checked={formData.showSeller} onChange={handleChange} /> Include Seller
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showArticle" checked={formData.showArticle} onChange={handleChange} /> Include Article
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showColor" checked={formData.showColor} onChange={handleChange} /> Include Color
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showSize" checked={formData.showSize} onChange={handleChange} /> Include Size
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showExpirationDate" checked={formData.showExpirationDate} onChange={handleChange} /> Include Expiration Date
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showCountry" checked={formData.showCountry} onChange={handleChange} /> Include Country
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showBrand" checked={formData.showBrand} onChange={handleChange} /> Include Brand
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showEac" checked={formData.showEac} onChange={handleChange} /> Include EAC Mark
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>
-                <input type="checkbox" name="showNoReturn" checked={formData.showNoReturn} onChange={handleChange} /> Include "No Return" Text
-              </label>
-            </div>
-          </div>
-          <div style={{ marginBottom: '1rem' }}>
-            <label>SVG Logo: <input type="file" name="logo" accept="image/svg+xml" onChange={handleChange} /></label>
-          </div>
-          {formData.logo && (
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Logo Width (mm): <input type="range" name="logoWidth" value={formData.logoWidth} onChange={handleChange} min="5" max={formData.widthMm} step="0.1" /></label>
-            </div>
-          )}
-          <div style={{ marginBottom: '1rem' }}>
-            <label>Frame: </label>
-            <select name="frame" value={formData.frame} onChange={handleChange}>
-              {frameOptions.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ marginBottom: '1rem' }}>
-            <label>Font: </label>
-            <select name="font" value={formData.font} onChange={handleChange}>
-              {fontOptions.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ marginBottom: '1rem' }}>
-            <label>Page Size (mm): </label>
-            <select
-              name="pageSize"
-              value={`${formData.widthMm}x${formData.heightMm}`}
-              onChange={handleChange}
-              required
-            >
-              {pageSizes.map((size, index) => (
-                <option key={index} value={`${size.widthMm}x${size.heightMm}`}>
-                  {size.widthMm} × {size.heightMm}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Generating...' : 'Generate PDF'}
-            </button>
-            <button
-              type="button"
-              onClick={(e) => handleSubmit(e, true)}
-              disabled={isLoading}
-              style={{ backgroundColor: '#4CAF50', color: 'white', padding: '0.5rem 1rem', border: 'none', borderRadius: '4px' }}
-            >
-              {isLoading ? 'Generating...' : 'Preview PDF'}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div style={{ flex: 1 }}>
-        <h2>Live Preview</h2>
-        <div
-          style={{
-            width: `${formData.widthMm * 3.7795275591}px`,
-            height: `${formData.heightMm * 3.7795275591}px`,
-            border: '1px solid #ccc',
-            position: 'relative',
-            backgroundColor: '#f9f9f9',
-            overflow: 'hidden'
-          }}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0 }} />
-          {logoPreview && (
-            <img
-              src={logoPreview}
-              alt="Logo"
-              style={{
-                width: `${formData.logoWidth * 2.83465}px`,
-                position: 'absolute',
-                left: `${(formData.logoXPercent * formData.widthMm * 2.83465) / 100}px`,
-                bottom: `${(formData.logoYPercent * formData.heightMm * 2.83465) / 100}px`,
-                cursor: 'move'
-              }}
-              draggable
-            />
-          )}
+          {/* <PreviewComponent
+            formData={formData}
+            logoPreview={logoPreview}
+            previewUrl={previewUrl}
+            handleDragOver={handleDragOver}
+            handleDrop={handleDrop}
+          /> */}
         </div>
-        {formData.logo && (
-          <p>Logo Position: X={formData.logoXPercent.toFixed(2)}%, Y={formData.logoYPercent.toFixed(2)}%, Width={formData.logoWidth.toFixed(2)}mm</p>
-        )}
-        {previewUrl && (
-          <div style={{ marginTop: '2rem' }}>
-            <h2>PDF Preview</h2>
-            <iframe
-              src={previewUrl}
-              style={{ width: '100%', height: '500px', border: '1px solid #ccc' }}
-              title="PDF Preview"
-            />
-          </div>
-        )}
-      </div>
-    </div>
+    // <div style={{ padding: '2rem', fontFamily: 'sans-serif', display: 'flex', gap: '2rem' }}>
+    //   <div style={{ flex: 1 }}>
+    //     <h1>PDF Generator Old</h1>
+    //     {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+    //     <form onSubmit={(e) => handleSubmit(e, false)}>
+    //       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1em' }}>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Barcode Type: </label>
+    //           <select name="barcodeType" value={formData.barcodeType} onChange={handleChange}>
+    //             <option value="code128">Code128</option>
+    //             <option value="ean13">EAN-13</option>
+    //             <option value="ean8">EAN-8</option>
+    //             <option value="upc">UPC</option>
+    //           </select>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Barcode Value: <input name="barcodeValue" placeholder="Barcode value" value={formData.barcodeValue} onChange={handleChange} required /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Seller: <input name="seller" placeholder="Seller" value={formData.seller} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Product Name: <input name="productName" placeholder="Product name" value={formData.productName} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Article: <input name="article" placeholder="Article" value={formData.article} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Color: <input name="color" placeholder="Color" value={formData.color} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Size: <input name="size" placeholder="Size" value={formData.size} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Expiration Date: <input name="expirationDate" placeholder="Expiration Date" value={formData.expirationDate} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Country: <input name="country" placeholder="Country" value={formData.country} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Brand: <input name="brand" placeholder="Brand" value={formData.brand} onChange={handleChange} /></label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Custom Text: <input name="customText" placeholder="Custom text" value={formData.customText} onChange={handleChange} /></label>
+    //         </div>
+    //       </div>
+    //       <div style={{ display: 'flex', gap: '1em' }}>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showSeller" checked={formData.showSeller} onChange={handleChange} /> Include Seller
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showArticle" checked={formData.showArticle} onChange={handleChange} /> Include Article
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showColor" checked={formData.showColor} onChange={handleChange} /> Include Color
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showSize" checked={formData.showSize} onChange={handleChange} /> Include Size
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showExpirationDate" checked={formData.showExpirationDate} onChange={handleChange} /> Include Expiration Date
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showCountry" checked={formData.showCountry} onChange={handleChange} /> Include Country
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showBrand" checked={formData.showBrand} onChange={handleChange} /> Include Brand
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showEac" checked={formData.showEac} onChange={handleChange} /> Include EAC Mark
+    //           </label>
+    //         </div>
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>
+    //             <input type="checkbox" name="showNoReturn" checked={formData.showNoReturn} onChange={handleChange} /> Include "No Return" Text
+    //           </label>
+    //         </div>
+    //       </div>
+    //       <div style={{ marginBottom: '1rem' }}>
+    //         <label>SVG Logo: <input type="file" name="logo" accept="image/svg+xml" onChange={handleChange} /></label>
+    //       </div>
+    //       {formData.logo && (
+    //         <div style={{ marginBottom: '1rem' }}>
+    //           <label>Logo Width (mm): <input type="range" name="logoWidth" value={formData.logoWidth} onChange={handleChange} min="5" max={formData.widthMm} step="0.1" /></label>
+    //         </div>
+    //       )}
+    //       <div style={{ marginBottom: '1rem' }}>
+    //         <label>Frame: </label>
+    //         <select name="frame" value={formData.frame} onChange={handleChange}>
+    //           {frameOptions.map((option, index) => (
+    //             <option key={index} value={option.value}>
+    //               {option.label}
+    //             </option>
+    //           ))}
+    //         </select>
+    //       </div>
+    //       <div style={{ marginBottom: '1rem' }}>
+    //         <label>Font: </label>
+    //         <select name="font" value={formData.font} onChange={handleChange}>
+    //           {fontOptions.map((option, index) => (
+    //             <option key={index} value={option.value}>
+    //               {option.label}
+    //             </option>
+    //           ))}
+    //         </select>
+    //       </div>
+    //       <div style={{ marginBottom: '1rem' }}>
+    //         <label>Page Size (mm): </label>
+    //         <select
+    //           name="pageSize"
+    //           value={`${formData.widthMm}x${formData.heightMm}`}
+    //           onChange={handleChange}
+    //           required
+    //         >
+    //           {pageSizes.map((size, index) => (
+    //             <option key={index} value={`${size.widthMm}x${size.heightMm}`}>
+    //               {size.widthMm} × {size.heightMm}
+    //             </option>
+    //           ))}
+    //         </select>
+    //       </div>
+    //       <div style={{ display: 'flex', gap: '1rem' }}>
+    //         <button type="submit" disabled={isLoading}>
+    //           {isLoading ? 'Generating...' : 'Generate PDF'}
+    //         </button>
+    //         <button
+    //           type="button"
+    //           onClick={(e) => handleSubmit(e, true)}
+    //           disabled={isLoading}
+    //           style={{ backgroundColor: '#4CAF50', color: 'white', padding: '0.5rem 1rem', border: 'none', borderRadius: '4px' }}
+    //         >
+    //           {isLoading ? 'Generating...' : 'Preview PDF'}
+    //         </button>
+    //       </div>
+    //     </form>
+    //   </div>
+    //   <div style={{ flex: 1 }}>
+    //     <h2>Live Preview</h2>
+    //     <div
+    //       style={{
+    //         width: `${formData.widthMm * 3.7795275591}px`,
+    //         height: `${formData.heightMm * 3.7795275591}px`,
+    //         border: '1px solid #ccc',
+    //         position: 'relative',
+    //         backgroundColor: '#f9f9f9',
+    //         overflow: 'hidden'
+    //       }}
+    //       onDragOver={handleDragOver}
+    //       onDrop={handleDrop}
+    //     >
+    //       <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0 }} />
+    //       {logoPreview && (
+    //         <img
+    //           src={logoPreview}
+    //           alt="Logo"
+    //           style={{
+    //             width: `${formData.logoWidth * 2.83465}px`,
+    //             position: 'absolute',
+    //             left: `${(formData.logoXPercent * formData.widthMm * 2.83465) / 100}px`,
+    //             bottom: `${(formData.logoYPercent * formData.heightMm * 2.83465) / 100}px`,
+    //             cursor: 'move'
+    //           }}
+    //           draggable
+    //         />
+    //       )}
+    //     </div>
+    //     {formData.logo && (
+    //       <p>Logo Position: X={formData.logoXPercent.toFixed(2)}%, Y={formData.logoYPercent.toFixed(2)}%, Width={formData.logoWidth.toFixed(2)}mm</p>
+    //     )}
+    //     {previewUrl && (
+    //       <div style={{ marginTop: '2rem' }}>
+    //         <h2>PDF Preview</h2>
+    //         <iframe
+    //           src={previewUrl}
+    //           style={{ width: '100%', height: '500px', border: '1px solid #ccc' }}
+    //           title="PDF Preview"
+    //         />
+    //       </div>
+    //     )}
+    //   </div>
+    // </div>
+
+
+
   );
 }
 

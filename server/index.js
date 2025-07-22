@@ -44,7 +44,7 @@ app.use('/frames', framesRoute);
 //Fonts
 const fonts = require('./routes/fonts') 
 app.use('/fonts', fonts);
-
+// app.get('/public/')
 
 //PDF denetarion
 const generatePDF = require('./routes/generate-pdf')
