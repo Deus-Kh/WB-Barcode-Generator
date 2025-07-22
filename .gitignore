@@ -1,0 +1,5 @@
+/server/node_modules
+/server/uploads
+/server/public
+!/server/public/frames
+!/server/public/eac.svg
