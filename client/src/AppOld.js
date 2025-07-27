@@ -59,6 +59,7 @@ function App() {
     font: 'arial.ttf',
     widthMm: 58,
     heightMm: 40,
+    paper:'thermal'
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -225,7 +226,7 @@ function App() {
       const availableHeight = mmToPt(formData.heightMm) - barcodeBottomY;
       // const fontSize = Math.max(5, Math.min(8, availableHeight / (lineCount * 1)));
       const fontSize = formData.heightMm < 30 ? 6 : Math.max(5, Math.min(8, availableHeight / (lineCount) * 1.2));
-      // console.log("Font Size:",fontSize);
+      console.log("Font Size:",fontSize);
 
       ctx.font = `${fontSize}px Helvetica`;
       ctx.fillStyle = 'black';
@@ -437,26 +438,26 @@ function App() {
             <label>Amount*: <input name="amount" required={true} placeholder="Amount" type='number' value={formData.amount} onChange={handleChange} /></label>
           </div>
           <div style={{ display: 'flex', gap: '1em' }}>
-            <div style={{ marginBottom: '1rem' }}>
+            {/* <div style={{ marginBottom: '1rem' }}>
               <label>
                 <input type="checkbox" name="showSeller" checked={formData.showSeller} onChange={handleChange} /> Include Seller
               </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
+            </div> */}
+            {/* <div style={{ marginBottom: '1rem' }}>
               <label>
                 <input type="checkbox" name="showArticle" checked={formData.showArticle} onChange={handleChange} /> Include Article
               </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
+            </div> */}
+            {/* <div style={{ marginBottom: '1rem' }}>
               <label>
                 <input type="checkbox" name="showColor" checked={formData.showColor} onChange={handleChange} /> Include Color
               </label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
+            </div> */}
+            {/* <div style={{ marginBottom: '1rem' }}>
               <label>
                 <input type="checkbox" name="showSize" checked={formData.showSize} onChange={handleChange} /> Include Size
               </label>
-            </div>
+            </div> */}
             {/* <div style={{ marginBottom: '1rem' }}>
               <label>
                 <input type="checkbox" name="showExpirationDate" checked={formData.showExpirationDate} onChange={handleChange} /> Include Expiration Date
@@ -533,6 +534,18 @@ function App() {
               ))}
             </select>
           </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Type of paper:</label>
+            <div>
+              <input type="radio" name="paper" value="thermal" checked={formData.paper==='thermal'} onChange={handleChange} />
+              <label for="paper">Thermal</label>
+            </div>
+
+            <div>
+              <input type="radio"  name="paper" value="a4" checked={formData.paper==='a4'}  onChange={handleChange}/>
+              <label for="paper">A4</label>
+            </div>
+          </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button type="submit" disabled={isLoading}>
               {isLoading ? 'Generating...' : 'Generate PDF'}
@@ -567,13 +580,15 @@ function App() {
             <img
               src={logoPreview}
               alt="Logo"
+              
               style={{
                 width: `${formData.logoWidth * 3.7795275591}px`,
 
                 position: 'absolute',
                 left: `${(formData.logoXPercent * formData.widthMm * 3.7795275591) / 100}px`,
                 bottom: `${(formData.logoYPercent * formData.heightMm * 3.7795275591) / 100}px`,
-                cursor: 'move'
+                cursor: 'move',
+                filter: 'grayscale(100%)'
               }}
               draggable
             />

@@ -46,12 +46,19 @@ module.exports = async function pdfBuilder(req) {
         logoYPercent,
         logoWidth,
         frame,
+        paper
 
     } = req.body;
 
 
     const widthMMNum = (widthMm);
     const heightMMNum = (heightMm);
+    const a4WidthPt = mmToPt(210);
+    const a4HeightPt = mmToPt(297);
+    const marginPt = paper === 'a4' ? 1 : 0;
+
+
+
     const doc = new PDFDocument({ size: [mmToPt(widthMMNum), mmToPt(heightMMNum)], margin: -1 });
     doc.font(path.join(__dirname, '../public',`/fonts/${font}`))
     if (isNaN(widthMMNum) || isNaN(heightMMNum) || widthMMNum <= 0 || heightMMNum <= 0) {
@@ -144,10 +151,14 @@ module.exports = async function pdfBuilder(req) {
 
         // let textY = 0
         // doc.text(lines[0], mmToPt(widthMMNum / 9.8),-textY)
+        
         lines.forEach(line => {
-
-            doc.text(line, mmToPt(widthMMNum / 9.8), textY,{width:mmToPt(widthMm)/2, lineBreak:false, lineGap:0})
-            textY += heightMMNum < 30 ? fontSize : fontSize * 1.2;
+            if (textY<mmToPt(heightMm)-fontSize) {
+                doc.text(line, mmToPt(widthMMNum / 9.8), textY,{width:mmToPt(widthMm)/2, lineBreak:false, lineGap:0})
+                textY += heightMMNum < 30 ? fontSize : fontSize * 1.2;
+            }
+            
+            
 
         })
 
