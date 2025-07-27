@@ -24,6 +24,7 @@ module.exports = async function addFrame(pdfDoc, page, frame, width,height) {
                 .toBuffer()
             : fileBuffer; // Если PNG, используем как есть
         const image = await pdfDoc.embedPng(pngBuffer);
+        // page.drawImage(image, { x: 0, y: 0, width, height });
         page.drawImage(image, { x: 0, y: 0, width, height });
     } catch (err) {
         console.error('Error processing frame:', err);

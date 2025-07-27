@@ -11,12 +11,15 @@ module.exports = async function addEacIcon(pdfDoc, page, widthMMNum, heightMMNum
     }
     try {
         const svgBuffer = await fsPromises.readFile(eacPath);
+
         const pngBuffer = await sharp(svgBuffer)
-            .resize({ width: Math.round(mmToPt(10)) }) // 10 мм
+            // .resize({ width: Math.round(mmToPt(10)) }) // 10 мм
             .png()
             .toBuffer();
         const image = await pdfDoc.embedPng(pngBuffer);
-        const dims = image.scale(0.5);
+        const dims = {width: 14,height: 13};
+        // console.log("eac:" , image.scale(0.5));
+        
         page.drawImage(image, {
             x: mmToPt(widthMMNum / 100 * 70),
             y: mmToPt(heightMMNum / 10),

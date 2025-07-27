@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import AppOld from './AppOld';
-// import App from './App';
+import App from './App';
 // import AppAI from './AppAI';
 import reportWebVitals from './reportWebVitals';
 // import dotenv from 'dotenv';

@@ -1,26 +1,33 @@
+
 const fs = require('fs');
 const fsPromises = fs.promises;
 const path = require('path');
 const sharp = require('sharp');
+
+const PDFDocument = require('pdfkit');
+const SVGtoPDF = require('svg-to-pdfkit');
 const mmToPt = mm => mm * 2.8346456693;
-
-module.exports = async function addLogo(pdfDoc, page, svgPath,logoWidth,widthMMNum,heightMMNum,logoXPercent,logoYPercent) {
+module.exports = async function addLogo(doc, svgPath, logoWidth, widthMMNum, heightMMNum, logoXPercent, logoYPercent) {
     try {
-        const pngBuffer = await sharp(svgPath)
-            .resize({ width: Math.round(mmToPt(logoWidth)) }) // 10 мм
-            .png()
-            .toBuffer();
-        const image = await pdfDoc.embedPng(pngBuffer);
-        const dims = image.scale(1);
-        console.log("logo", widthMMNum / 100 * logoXPercent);
 
+        let logoSVG = fs.readFileSync(svgPath).toString()
+        // .replace(/width="[^"]*"/i, '')
+        // .replace(/height="[^"]*"/i, '');
+        const hasViewBox = /viewBox="[^"]*"/i.test(logoSVG);
 
-        page.drawImage(image, {
-            x: mmToPt(widthMMNum / 100 * logoXPercent),
-            y: mmToPt(heightMMNum / 100 * logoYPercent),
-            width: dims.width,
-            height: dims.height
-        });
+        if(!hasViewBox){
+            const widthMatch = logoSVG.match(/width="([\d.]+)([a-z]*)"/i);
+            const heightMatch = logoSVG.match(/height="([\d.]+)([a-z]*)"/i);
+            
+            logoSVG = logoSVG.replace(
+                /<svg/i,
+                `<svg viewBox="0 0 ${widthMatch} ${heightMatch}"`
+                );
+        }
+        logoSVG = logoSVG.replace(/width="[^"]*"/i, '').replace(/height="[^"]*"/i, '');
+
+        SVGtoPDF(doc, logoSVG, mmToPt(widthMMNum / 100 * logoXPercent), mmToPt(heightMMNum / 100 * (100 - logoYPercent)) - mmToPt(logoWidth), { width: mmToPt(logoWidth), height: mmToPt(logoWidth) })
+
         await fsPromises.unlink(svgPath);
     } catch (err) {
         console.error('Error processing logo:', err);

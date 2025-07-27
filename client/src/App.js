@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import bwipjs from 'bwip-js';
 import MyForm from './components/MyForm';
+import { useFormData } from './hooks/useFormData';
+import { useServerData } from './hooks/useServerData';
 // import dotenv from 'dotenv';
 
 // dotenv.config();
@@ -28,69 +30,41 @@ const pageSizes = [
 ];
 
 function App() {
-  const [formData, setFormData] = useState({
-    barcodeType: 'code128',
-    barcodeValue: '',
-    seller: '',
-    productName: '',
-    article: '',
-    color: '',
-    size: '',
-    expirationDate: '',
-    country: '',
-    brand: '',
-    customText: '',
-    showArticle: true,
-    showSeller: true,
-    showColor: true,
-    showSize: true,
-    showExpirationDate: true,
-    showCountry: true,
-    showBrand: true,
-    showEac: false,
-    showNoReturn: false,
-    logo: null,
-    logoXPercent: 0,
-    logoYPercent: 0,
-    logoWidth: 10,
-    frame: 'None',
-    font:'arial.ttf',
-    widthMm: 58,
-    heightMm: 40,
-  });
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [frameOptions, setFrameOptions] = useState([{ value: 'None', label: 'No Frame' }]);
-  const [fontOptions, setFontOptions] = useState([{value:"arial.ttf",label:"Arial"}]);
-  const [logoPreview, setLogoPreview] = useState(null);
+  const { formData, logoPreview, handleChange, handleDragOver, handleDrop } = useFormData();
+  const { frameOptions, fontOptions, error, isLoading, previewUrl, handleSubmit } = useServerData(REACT_APP_SERVER_URL);
+  // const [error, setError] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [previewUrl, setPreviewUrl] = useState(null);
+  // const [frameOptions, setFrameOptions] = useState([{ value: 'None', label: 'No Frame' }]);
+  // const [fontOptions, setFontOptions] = useState([{value:"arial.ttf",label:"Arial"}]);
+  // const [logoPreview, setLogoPreview] = useState(null);
   const canvasRef = useRef(null);
 
   // Загрузка списка рамок
-  useEffect(() => {
-    const fetchFrames = async () => {
-      try {
-        const res = await fetch(REACT_APP_SERVER_URL+'/frames');
-        if (!res.ok) throw new Error('Failed to load frames');
-        const frames = await res.json();
-        setFrameOptions(frames);
-      } catch (err) {
-        setError(`Error loading frames: ${err.message}`);
-      }
-    };
-    const fetchFonts = async () => {
-      try {
-        const res = await fetch(REACT_APP_SERVER_URL+'/fonts');
-        if (!res.ok) throw new Error('Failed to load fonts');
-        const fonts = await res.json();
-        setFontOptions(fonts);
-      } catch (err) {
-        setError(`Error loading fonts: ${err.message}`);
-      }
-    };
-    fetchFrames();
-    fetchFonts();
-  }, []);
+  // useEffect(() => {
+  //   const fetchFrames = async () => {
+  //     try {
+  //       const res = await fetch(REACT_APP_SERVER_URL+'/frames');
+  //       if (!res.ok) throw new Error('Failed to load frames');
+  //       const frames = await res.json();
+  //       setFrameOptions(frames);
+  //     } catch (err) {
+  //       setError(`Error loading frames: ${err.message}`);
+  //     }
+  //   };
+  //   const fetchFonts = async () => {
+  //     try {
+  //       const res = await fetch(REACT_APP_SERVER_URL+'/fonts');
+  //       if (!res.ok) throw new Error('Failed to load fonts');
+  //       const fonts = await res.json();
+  //       setFontOptions(fonts);
+  //     } catch (err) {
+  //       setError(`Error loading fonts: ${err.message}`);
+  //     }
+  //   };
+  //   fetchFrames();
+  //   fetchFonts();
+  // }, []);
 
   // Live Preview рендеринг
   useEffect(() => {
@@ -245,108 +219,108 @@ function App() {
     })();
   }, [formData]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (type === 'checkbox') {
-      setFormData({ ...formData, [name]: checked });
-    } else if (type === 'file') {
-      if (files[0] && files[0].type !== 'image/svg+xml') {
-        setError('Please upload a valid SVG file');
-        return;
-      }
-      setFormData({ ...formData, [name]: files[0], logoXPercent: 0, logoYPercent: 0 });
-      setLogoPreview(files[0] ? URL.createObjectURL(files[0]) : null);
-    } else if (name === 'pageSize') {
-      const [widthMm, heightMm] = value.split('x').map(parseFloat);
-      setFormData({ ...formData, widthMm, heightMm, logoXPercent: 0, logoYPercent: 0 });
-    } else if (name === 'logoWidth') {
-      const logoWidth = parseFloat(value) || 10;
-      setFormData({ ...formData, logoWidth: Math.max(5, Math.min(logoWidth, formData.widthMm)) });
-    } else {
-      const sanitizedValue = type === 'text' ? value : value;
-      setFormData({ ...formData, [name]: sanitizedValue });
-    }
-  };
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked, files } = e.target;
+  //   if (type === 'checkbox') {
+  //     setFormData({ ...formData, [name]: checked });
+  //   } else if (type === 'file') {
+  //     if (files[0] && files[0].type !== 'image/svg+xml') {
+  //       setError('Please upload a valid SVG file');
+  //       return;
+  //     }
+  //     setFormData({ ...formData, [name]: files[0], logoXPercent: 0, logoYPercent: 0 });
+  //     setLogoPreview(files[0] ? URL.createObjectURL(files[0]) : null);
+  //   } else if (name === 'pageSize') {
+  //     const [widthMm, heightMm] = value.split('x').map(parseFloat);
+  //     setFormData({ ...formData, widthMm, heightMm, logoXPercent: 0, logoYPercent: 0 });
+  //   } else if (name === 'logoWidth') {
+  //     const logoWidth = parseFloat(value) || 10;
+  //     setFormData({ ...formData, logoWidth: Math.max(5, Math.min(logoWidth, formData.widthMm)) });
+  //   } else {
+  //     const sanitizedValue = type === 'text' ? value : value;
+  //     setFormData({ ...formData, [name]: sanitizedValue });
+  //   }
+  // };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  // const handleDragOver = (e) => {
+  //   e.preventDefault();
+  // };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const widthPx = formData.widthMm * 2.83465;
-    const heightPx = formData.heightMm * 2.83465;
-    const logoXPercent = (x / widthPx) * 100;
-    const logoYPercent = ((heightPx - y) / heightPx) * 100;
-    const logoWidthPx = formData.logoWidth * 2.83465;
-    setFormData({
-      ...formData,
-      logoXPercent: Math.max(0, Math.min(logoXPercent, 100 - (logoWidthPx / widthPx) * 100)),
-      logoYPercent: Math.max(0, Math.min(logoYPercent, 100 - (logoWidthPx / heightPx) * 100)),
-    });
-  };
+  // const handleDrop = (e) => {
+  //   e.preventDefault();
+  //   const rect = e.currentTarget.getBoundingClientRect();
+  //   const x = e.clientX - rect.left;
+  //   const y = e.clientY - rect.top;
+  //   const widthPx = formData.widthMm * 2.83465;
+  //   const heightPx = formData.heightMm * 2.83465;
+  //   const logoXPercent = (x / widthPx) * 100;
+  //   const logoYPercent = ((heightPx - y) / heightPx) * 100;
+  //   const logoWidthPx = formData.logoWidth * 2.83465;
+  //   setFormData({
+  //     ...formData,
+  //     logoXPercent: Math.max(0, Math.min(logoXPercent, 100 - (logoWidthPx / widthPx) * 100)),
+  //     logoYPercent: Math.max(0, Math.min(logoYPercent, 100 - (logoWidthPx / heightPx) * 100)),
+  //   });
+  // };
 
-  const handleSubmit = async (e, isPreview = false) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-    if (isPreview) setPreviewUrl(null);
+  // const handleSubmit = async (e, isPreview = false) => {
+  //   e.preventDefault();
+  //   setError(null);
+  //   setIsLoading(true);
+  //   if (isPreview) setPreviewUrl(null);
 
-    if (!formData.barcodeValue) {
-      setError('Barcode value is required');
-      setIsLoading(false);
-      return;
-    }
-    if (!formData.widthMm || formData.widthMm <= 0) {
-      setError('Width must be a positive number');
-      setIsLoading(false);
-      return;
-    }
-    if (!formData.heightMm || formData.heightMm <= 0) {
-      setError('Height must be a positive number');
-      setIsLoading(false);
-      return;
-    }
+  //   if (!formData.barcodeValue) {
+  //     setError('Barcode value is required');
+  //     setIsLoading(false);
+  //     return;
+  //   }
+  //   if (!formData.widthMm || formData.widthMm <= 0) {
+  //     setError('Width must be a positive number');
+  //     setIsLoading(false);
+  //     return;
+  //   }
+  //   if (!formData.heightMm || formData.heightMm <= 0) {
+  //     setError('Height must be a positive number');
+  //     setIsLoading(false);
+  //     return;
+  //   }
 
-    const data = new FormData();
-    for (let key in formData) {
-      if (formData[key] instanceof File) {
-        data.append(key, formData[key]);
-      } else if (formData[key] !== null && formData[key] !== '') {
-        data.append(key, formData[key]);
-      }
-    }
+  //   const data = new FormData();
+  //   for (let key in formData) {
+  //     if (formData[key] instanceof File) {
+  //       data.append(key, formData[key]);
+  //     } else if (formData[key] !== null && formData[key] !== '') {
+  //       data.append(key, formData[key]);
+  //     }
+  //   }
 
-    for (let [key, value] of data.entries()) {
-      console.log(`FormData: ${key} = ${value}`);
-    }
+  //   for (let [key, value] of data.entries()) {
+  //     console.log(`FormData: ${key} = ${value}`);
+  //   }
 
-    try {
-      const res = await fetch(REACT_APP_SERVER_URL+'/generate-pdf', {
-        method: 'POST',
-        body: data,
-      });
+  //   try {
+  //     const res = await fetch(REACT_APP_SERVER_URL+'/generate-pdf', {
+  //       method: 'POST',
+  //       body: data,
+  //     });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to generate PDF');
-      }
+  //     if (!res.ok) {
+  //       const errorData = await res.json();
+  //       throw new Error(errorData.message || 'Failed to generate PDF');
+  //     }
 
-      const { url } = await res.json();
-      if (isPreview) {
-        setPreviewUrl(url);
-      } else {
-        window.open(url, '_blank');
-      }
-    } catch (err) {
-      setError(`Error: ${err.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     const { url } = await res.json();
+  //     if (isPreview) {
+  //       setPreviewUrl(url);
+  //     } else {
+  //       window.open(url, '_blank');
+  //     }
+  //   } catch (err) {
+  //     setError(`Error: ${err.message}`);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
 
@@ -354,7 +328,14 @@ function App() {
           <div style={{ flex: 1 }}>
             <h1>PDF Generator Antd</h1>
             {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
-            <MyForm/>
+            <MyForm
+            formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              isLoading={isLoading}
+              frameOptions={frameOptions}
+              fontOptions={fontOptions }
+            />
             {/* <FormComponent
               formData={formData}
               handleChange={handleChange}

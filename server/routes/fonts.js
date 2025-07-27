@@ -5,7 +5,7 @@ const fsPromises = fs.promises;
 const path = require('path');
 
 // Проверка и создание папки frames
-const fontsDir = path.join(__dirname, '../fonts');
+const fontsDir = path.join(__dirname, '../public','/fonts');
 if (!fs.existsSync(fontsDir)) {
   throw new Error('Failed to load fonts');
 }

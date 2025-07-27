@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const sharp = require('sharp');
-const pdfBuilder = require('../services/pdfBuilder');
+const pdfBuilder = require('../services/test-pdfkit');
 const dotenv = require('dotenv')
 
 dotenv.config()

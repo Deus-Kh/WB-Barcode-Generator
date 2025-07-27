@@ -15,7 +15,7 @@ router.get('/', async (req,res)=>{
     try {
     const files = await fsPromises.readdir(framesDir);
     const svgFiles = files
-      // .filter(file => file.endsWith('.svg'))
+      .filter(file => file.endsWith('.svg'))
       .map(file => ({
         value: file,
         label: file.replace('.svg', '').replace('.png', '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())

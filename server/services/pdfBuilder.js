@@ -21,7 +21,7 @@ module.exports = async function pdfBuilder(req) {
         seller,
         color,
         size,
-        expirationDate,
+        amount,
         country,
         brand,
         customText,
@@ -30,11 +30,12 @@ module.exports = async function pdfBuilder(req) {
         heightMm,
         showColor,
         showSize,
-        showExpirationDate,
+        // showExpirationDate,
         showCountry,
         showBrand,
         showArticle,
         showSeller,
+        showCustomText,
         showEac,
         showNoReturn,
         logoXPercent,
@@ -73,14 +74,14 @@ module.exports = async function pdfBuilder(req) {
     if ((showColor === 'true' && color) || (showSize === 'true' && size)) {
         lines.push((color && size) ? `Color: ${color} / Size: ${size}` : (color ? `Color: ${color}` : `Size: ${size}`));
     }
-    if (showExpirationDate === 'true' && expirationDate) lines.push(`Expiration date: ${expirationDate}`);
+    // if (showExpirationDate === 'true' && expirationDate) lines.push(`Expiration date: ${expirationDate}`);
     if (showCountry === 'true' && country) lines.push(`Country: ${country}`);
     if (showBrand === 'true' && brand) lines.push(`Brand: ${brand}`);
+    if (showCustomText==='true'&&customText) lines.push(customText);
     if (showNoReturn === 'true') lines.push('Товар не подлежит возврату');
-    if (customText) lines.push(customText);
 
     const lineCount = lines.length;
-    const marginTop = Math.min(5, Math.max(2, heightMMNum / (lineCount + 1)));
+    const marginTop = Math.min(10, Math.max(2, heightMMNum / (lineCount + 1)));
     // console.log("Top:", marginTop);
 
 
@@ -92,22 +93,29 @@ module.exports = async function pdfBuilder(req) {
     }
 
     const barcodeScale = heightMMNum < 30 ? 0.25 : 0.4; // 0.3 при heightMm < 30, иначе 0.4
-    console.log("height",heightMMNum);
+    // console.log("height",heightMMNum);
     
     const barcodeBuffer = await bwipjs.toBuffer({
         bcid: barcodeType,
         text: barcodeValue,
-        scale: 2,
+        monochrome:true,
+        scale: 20,
         height: 10,
         includetext: true,
         textxalign: 'center',
-        textsize: 10
+        textsize: 10,
+        // render:'svg'
     });
 
     const barcodeImage = await pdfDoc.embedPng(barcodeBuffer);
-    const barcodeDims = barcodeImage.scale(barcodeScale);
+    // console.log("Barcode Image",barcodeImage);
+    
+    // const barcodeDims = barcodeImage.scale(barcodeScale);
+    const barcodeDims =  heightMMNum < 30 ? { width: 45, height: 18.5 }:{ width: 72, height: 29.6 }
+    // console.log("Barcode Image 2",barcodeDims);
+
     const barcodeY = heightMMNum < 30 ? height - mmToPt(marginTop) / 2.25 - barcodeDims.height : height - mmToPt(marginTop) - barcodeDims.height;
-    console.log(marginTop);
+    // console.log("barcodeY:",(height));
 
     page.drawImage(barcodeImage, {
         x: width / 2 - barcodeDims.width / 2,
@@ -123,7 +131,7 @@ module.exports = async function pdfBuilder(req) {
     const availableHeight = height - barcodeY -mmToPt(marginTop); // Доступная высота для текста
     const fontSize = heightMMNum < 30 ? Math.max(5, Math.min(10, availableHeight / (lineCount))) : Math.max(5,Math.min(8, availableHeight / (lineCount) * 1.2)); // Мин 6pt, макс 10pt
     console.log("fontSize", fontSize);
-
+    
     // Отрисовка текста
     let textY = barcodeY - mmToPt(marginTop);
     lines.forEach(line => {
@@ -149,7 +157,7 @@ module.exports = async function pdfBuilder(req) {
     if (frame && frame !== 'None') await addFrame(pdfDoc, page,frame, width, height)
 
     // SVG логотип (загружаемый файл)
-    const addLogo = require('./addLogo')
+    const addLogo = require('./addLogoOld')
     if(req.file) await addLogo(pdfDoc, page, req.file.path,logoWidth,widthMMNum,heightMMNum,logoXPercent,logoYPercent)
     
 

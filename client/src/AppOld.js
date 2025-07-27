@@ -4,7 +4,7 @@ import bwipjs from 'bwip-js';
 
 // dotenv.config();
 
-const REACT_APP_SERVER_URL= process.env.REACT_APP_SERVER_URL;
+const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
 // Таблица размеров страницы
 const pageSizes = [
   { widthMm: 38, heightMm: 21.2 },
@@ -35,17 +35,20 @@ function App() {
     article: '',
     color: '',
     size: '',
-    expirationDate: '',
+    amount: 1,
+    // expirationDate: '',
     country: '',
     brand: '',
     customText: '',
+    
     showArticle: true,
     showSeller: true,
     showColor: true,
     showSize: true,
-    showExpirationDate: true,
-    showCountry: true,
-    showBrand: true,
+    // showExpirationDate: true,
+    showCountry: false,
+    showBrand: false,
+    showCustomText:false,
     showEac: false,
     showNoReturn: false,
     logo: null,
@@ -53,7 +56,7 @@ function App() {
     logoYPercent: 0,
     logoWidth: 10,
     frame: 'None',
-    font:'arial.ttf',
+    font: 'arial.ttf',
     widthMm: 58,
     heightMm: 40,
   });
@@ -61,7 +64,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [frameOptions, setFrameOptions] = useState([{ value: 'None', label: 'No Frame' }]);
-  const [fontOptions, setFontOptions] = useState([{value:"arial.ttf",label:"Arial"}]);
+  const [fontOptions, setFontOptions] = useState([{ value: "arial.ttf", label: "Arial" }]);
   const [logoPreview, setLogoPreview] = useState(null);
   const canvasRef = useRef(null);
 
@@ -69,7 +72,7 @@ function App() {
   useEffect(() => {
     const fetchFrames = async () => {
       try {
-        const res = await fetch(REACT_APP_SERVER_URL+'/frames');
+        const res = await fetch(REACT_APP_SERVER_URL + '/frames');
         if (!res.ok) throw new Error('Failed to load frames');
         const frames = await res.json();
         setFrameOptions(frames);
@@ -79,10 +82,23 @@ function App() {
     };
     const fetchFonts = async () => {
       try {
-        const res = await fetch(REACT_APP_SERVER_URL+'/fonts');
+        const res = await fetch(REACT_APP_SERVER_URL + '/fonts');
         if (!res.ok) throw new Error('Failed to load fonts');
         const fonts = await res.json();
         setFontOptions(fonts);
+        for (const font of fonts) {
+      try {
+        // console.log("FONT:::",`url(${REACT_APP_SERVER_URL}/fonts/${font.value})`);
+        
+        const fontFace = new FontFace(font.label, `url(${REACT_APP_SERVER_URL}/fonts/${font.value})`);
+        await fontFace.load();
+        // console.log("FontFace", font);
+        
+        document.fonts.add(fontFace);
+      } catch (fontErr) {
+        console.error(`Failed to load font ${font.name}:`, fontErr);
+      }
+    }
       } catch (err) {
         setError(`Error loading fonts: ${err.message}`);
       }
@@ -90,6 +106,7 @@ function App() {
     fetchFrames();
     fetchFonts();
   }, []);
+  
 
   // Live Preview рендеринг
   useEffect(() => {
@@ -127,28 +144,29 @@ function App() {
     // Рендеринг штрихкода
     const renderBarcode = async () => {
       const barcodeScale = formData.heightMm < 30 ? 0.625 : 1; // Увеличено
-      
+
       // console.log("MY SCALE", formData.heightMm);
       const lines = [];
-    if (formData.showSeller === true && formData.seller) lines.push(formData.seller);
-    if (formData.productName) lines.push(formData.productName);
-    if (formData.showArticle === true && formData.article) lines.push(`Article: ${formData.article}`);
-    if ((formData.showColor === true && formData.color) || (formData.showSize === true && formData.size)) {
+      if (formData.showSeller === true && formData.seller) lines.push(formData.seller);
+      if (formData.productName) lines.push(formData.productName);
+      if (formData.showArticle === true && formData.article) lines.push(`Article: ${formData.article}`);
+      if ((formData.showColor === true && formData.color) || (formData.showSize === true && formData.size)) {
         lines.push((formData.color && formData.size) ? `Color: ${formData.color} / Size: ${formData.size}` : (formData.color ? `Color: ${formData.color}` : `Size: ${formData.size}`));
-    }
-    if (formData.showExpirationDate === true && formData.expirationDate) lines.push(`Expiration date: ${formData.expirationDate}`);
-    if (formData.showCountry === true && formData.country) lines.push(`Country: ${formData.country}`);
-    if (formData.showBrand === true && formData.brand) lines.push(`Brand: ${formData.brand}`);
-    if (formData.showNoReturn === true) lines.push('Товар не подлежит возврату');
-    if (formData.customText) lines.push(formData.customText);
-
-    const lineCount = lines.length;
-    const marginTop = Math.min(9, Math.max(2, formData.heightMm / (lineCount + 2)));
-    console.log("Margin top:::" , marginTop);
-    
+      }
+      // if (formData.showExpirationDate === true && formData.expirationDate) lines.push(`Expiration date: ${formData.expirationDate}`);
+      if (formData.showCountry === true && formData.country) lines.push(`Country: ${formData.country}`);
+      if (formData.showBrand === true && formData.brand) lines.push(`Brand: ${formData.brand}`);
+      if (formData.showCustomText===true&&formData.customText) lines.push(formData.customText);
+      if (formData.showNoReturn === true) lines.push('Товар не подлежит обязательной сертификации');
       
+
+      const lineCount = lines.length;
+      const marginTop = Math.min(9, Math.max(2, formData.heightMm / (lineCount + 2)));
+      // console.log("Margin top:::", marginTop);
+
+
       if (!formData.barcodeValue) {
-        console.log('No barcode value');
+        // console.log('No barcode value');
         return 2; // Отступ сверху 2 мм
       }
       const tempCanvas = document.createElement('canvas');
@@ -157,21 +175,21 @@ function App() {
           bcid: formData.barcodeType,
           text: formData.barcodeValue,
           scale: 1,
-          height: 10, 
+          height: 10,
           includetext: true,
           textxalign: 'center',
-          textsize: 10, 
+          textsize: 10,
         });
         const barcodeDims = { width: tempCanvas.width * barcodeScale, height: tempCanvas.height * barcodeScale };
         // console.log("MY BARCODE DIMS", barcodeDims);
-        const barcodeY = formData.heightMm < 30 ?  mmToPt(marginTop)   :  mmToPt(marginTop) ; // Увеличено
+        const barcodeY = formData.heightMm < 30 ? mmToPt(marginTop) : mmToPt(marginTop); // Увеличено
         // console.log("MY BARCODE Y", barcodeY);
         const barcodeYPx = 2 * scaleFactor; // Штрихкод сверху с отступом 2 мм
-        console.log('Barcode: dims=', barcodeDims, 'yPx=', barcodeYPx, 'canvasHeight=', heightPx);
+        // console.log('Barcode: dims=', barcodeDims, 'yPx=', barcodeYPx, 'canvasHeight=', heightPx);
         ctx.drawImage(tempCanvas, widthPx / 2 - barcodeDims.width / 2, barcodeY, barcodeDims.width, barcodeDims.height);
-        return barcodeYPx + barcodeDims.height ;
+        return barcodeYPx + barcodeDims.height;
         // if (barcodeY >= 0 && barcodeY + barcodeDims.height <= barcodeY) {
-          
+
         //   return (barcodeYPx + barcodeDims.height) ; // Нижняя граница штрихкода в мм
         // } else {
         //   console.error('Barcode out of bounds:', { yPx: barcodeYPx, height: barcodeDims.height });
@@ -186,43 +204,43 @@ function App() {
     // Рендеринг текста
     const renderText = (barcodeBottomY) => {
       const lines = [];
-    if (formData.showSeller === true && formData.seller) lines.push(formData.seller);
-    if (formData.productName) lines.push(formData.productName);
-    if (formData.showArticle === true && formData.article) lines.push(`Article: ${formData.article}`);
-    if ((formData.showColor === true && formData.color) || (formData.showSize === true && formData.size)) {
+      if (formData.showSeller === true && formData.seller) lines.push(formData.seller);
+      if (formData.productName) lines.push(formData.productName);
+      if (formData.showArticle === true && formData.article) lines.push(`Article: ${formData.article}`);
+      if ((formData.showColor === true && formData.color) || (formData.showSize === true && formData.size)) {
         lines.push((formData.color && formData.size) ? `Color: ${formData.color} / Size: ${formData.size}` : (formData.color ? `Color: ${formData.color}` : `Size: ${formData.size}`));
-    }
-    if (formData.showExpirationDate === true && formData.expirationDate) lines.push(`Expiration date: ${formData.expirationDate}`);
-    if (formData.showCountry === true && formData.country) lines.push(`Country: ${formData.country}`);
-    if (formData.showBrand === true && formData.brand) lines.push(`Brand: ${formData.brand}`);
-    if (formData.showNoReturn === true) lines.push('Товар не подлежит возврату');
-    if (formData.customText) lines.push(formData.customText);
-      console.log("barcodeBottomY:::",barcodeBottomY);
-      
+      }
+      // if ( formData.expirationDate) lines.push(`Expiration date: ${formData.expirationDate}`);
+      if (formData.showCountry === true && formData.country) lines.push(`Country: ${formData.country}`);
+      if (formData.showBrand === true && formData.brand) lines.push(`Brand: ${formData.brand}`);
+      if (formData.showCustomText===true&&formData.customText) lines.push(formData.customText);
+      // console.log("barcodeBottomY:::", barcodeBottomY);
+      if (formData.showNoReturn === true) lines.push('Товар не подлежит обязательной сертификации');
+
       const lineCount = lines.length;
       // const marginTop = Math.min(2, Math.max(1, formData.heightMm / (lineCount + 2)));
-      const marginTop = Math.min(7, Math.max(2, formData.heightMm / (lineCount )));
+      const marginTop = Math.min(7, Math.max(2, formData.heightMm / (lineCount)));
       // const marginBottom = formData.logo || formData.showEac ? 8 : 3;
       // const availableHeight = formData.heightMm - barcodeBottomY - marginTop ;
-      const availableHeight = mmToPt(formData.heightMm) - barcodeBottomY   ;
+      const availableHeight = mmToPt(formData.heightMm) - barcodeBottomY;
       // const fontSize = Math.max(5, Math.min(8, availableHeight / (lineCount * 1)));
-      const fontSize = formData.heightMm < 30 ? 6 : Math.max(5,Math.min(8, availableHeight / (lineCount) * 1.2));
-      console.log();
-      
-      ctx.font = `${fontSize }px Helvetica`;
+      const fontSize = formData.heightMm < 30 ? 6 : Math.max(5, Math.min(8, availableHeight / (lineCount) * 1.2));
+      // console.log("Font Size:",fontSize);
+
+      ctx.font = `${fontSize}px Helvetica`;
       ctx.fillStyle = 'black';
       // let textY = barcodeBottomY * scaleFactor + marginTop * scaleFactor;
-      let textY = barcodeBottomY  + marginTop*scaleFactor +fontSize/scaleFactor;
-      console.log('Text: y=', textY, 'fontSize=', fontSize, 'lines=', lines, 'availableHeight=', availableHeight, 'marginTop=', marginTop, "x=",5 * scaleFactor);
-        lines.forEach(line => {
-          ctx.fillText(line, widthPx/9.8, textY);
-          textY += formData.heightMm < 30 ? fontSize : fontSize * 1.2;;
-        });
-    //   if (availableHeight > 0 && textY + fontSize * scaleFactor * 1.2 * lineCount <= heightPx) {
-        
-    //   } else {
-    //     console.error('Text out of bounds:', { textY, fontSize, lineCount, availableHeight });
-    //   }
+      let textY = barcodeBottomY + marginTop * scaleFactor + fontSize / scaleFactor;
+      // console.log('Text: y=', textY, 'fontSize=', fontSize, 'lines=', lines, 'availableHeight=', availableHeight, 'marginTop=', marginTop, "x=", 5 * scaleFactor);
+      lines.forEach(line => {
+        ctx.fillText(line, widthPx / 9.8, textY);
+        textY += formData.heightMm < 30 ? fontSize : fontSize * 1.2;;
+      });
+      //   if (availableHeight > 0 && textY + fontSize * scaleFactor * 1.2 * lineCount <= heightPx) {
+
+      //   } else {
+      //     console.error('Text out of bounds:', { textY, fontSize, lineCount, availableHeight });
+      //   }
     };
 
     // Рендеринг EAC и логотипа
@@ -236,9 +254,9 @@ function App() {
         const eacImg = new Image();
         eacImg.src = './eac.svg';
         eacImg.onload = () => {
-          const eacX = widthPx*0.7;
-          const eacY = (heightPx*0.9)-(mmToPt(10) /2);
-          ctx.drawImage(eacImg, eacX, eacY, mmToPt(10) /2, mmToPt(10) /2);
+          const eacX = widthPx * 0.7;
+          const eacY = (heightPx * 0.9) - (mmToPt(10) / 2);
+          ctx.drawImage(eacImg, eacX, eacY, mmToPt(10) / 2, mmToPt(10) / 2);
           console.log('EAC rendered at:', { x: eacX, y: eacY });
           checkDone();
         };
@@ -248,7 +266,7 @@ function App() {
         };
       }
 
-     
+
 
       if (!formData.showEac && !formData.logo) resolve();
     });
@@ -257,7 +275,7 @@ function App() {
     (async () => {
       await renderFrame();
       const barcodeBottomY = await renderBarcode();
-       renderText(barcodeBottomY);
+      renderText(barcodeBottomY);
       await renderEacAndLogo();
     })();
   }, [formData]);
@@ -274,14 +292,14 @@ function App() {
       setFormData({ ...formData, [name]: files[0], logoXPercent: 0, logoYPercent: 0 });
       setLogoPreview(files[0] ? URL.createObjectURL(files[0]) : null);
     } else if (name === 'pageSize') {
-      const [widthMm, heightMm] = value.split('x').map(parseFloat);
+      const [widthMm, heightMm] = value.split('x')
+      // .map(parseFloat);
       setFormData({ ...formData, widthMm, heightMm, logoXPercent: 0, logoYPercent: 0 });
     } else if (name === 'logoWidth') {
       const logoWidth = parseFloat(value) || 10;
       setFormData({ ...formData, logoWidth: Math.max(5, Math.min(logoWidth, formData.widthMm)) });
     } else {
-      const sanitizedValue = type === 'text' ? value : value;
-      setFormData({ ...formData, [name]: sanitizedValue });
+      setFormData({ ...formData, [name]: value });
     }
   };
 
@@ -308,6 +326,8 @@ function App() {
 
   const handleSubmit = async (e, isPreview = false) => {
     e.preventDefault();
+    // console.log(formData);
+
     setError(null);
     setIsLoading(true);
     if (isPreview) setPreviewUrl(null);
@@ -337,12 +357,12 @@ function App() {
       }
     }
 
-    for (let [key, value] of data.entries()) {
-      console.log(`FormData: ${key} = ${value}`);
-    }
+    // for (let [key, value] of data.entries()) {
+    //   console.log(`FormData: ${key} = ${value}`);
+    // }
 
     try {
-      const res = await fetch(REACT_APP_SERVER_URL+'/generate-pdf', {
+      const res = await fetch(REACT_APP_SERVER_URL + '/generate-pdf', {
         method: 'POST',
         body: data,
       });
@@ -382,14 +402,10 @@ function App() {
               </select>
             </div>
             <div style={{ marginBottom: '1rem' }}>
-              <label>Barcode Value: <input name="barcodeValue" placeholder="Barcode value" value={formData.barcodeValue} onChange={handleChange} required /></label>
+              <label>Barcode Value*: <input name="barcodeValue" placeholder="Barcode value" value={formData.barcodeValue} onChange={handleChange} required /></label>
             </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Seller: <input name="seller" placeholder="Seller" value={formData.seller} onChange={handleChange} /></label>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Product Name: <input name="productName" placeholder="Product name" value={formData.productName} onChange={handleChange} /></label>
-            </div>
+
+
             <div style={{ marginBottom: '1rem' }}>
               <label>Article: <input name="article" placeholder="Article" value={formData.article} onChange={handleChange} /></label>
             </div>
@@ -399,19 +415,27 @@ function App() {
             <div style={{ marginBottom: '1rem' }}>
               <label>Size: <input name="size" placeholder="Size" value={formData.size} onChange={handleChange} /></label>
             </div>
+
             <div style={{ marginBottom: '1rem' }}>
-              <label>Expiration Date: <input name="expirationDate" placeholder="Expiration Date" value={formData.expirationDate} onChange={handleChange} /></label>
+              <label>Product Name: <input name="productName" placeholder="Product name" value={formData.productName} onChange={handleChange} /></label>
             </div>
             <div style={{ marginBottom: '1rem' }}>
+              <label>Seller: <input name="seller" placeholder="Seller" value={formData.seller} onChange={handleChange} /></label>
+            </div>
+            
+            <div style={{ marginBottom: '1rem', display:`${formData.showCountry===true?'block':'none'}` }}  >
               <label>Country: <input name="country" placeholder="Country" value={formData.country} onChange={handleChange} /></label>
             </div>
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem',display:`${formData.showBrand===true?'block':'none'}` }}>
               <label>Brand: <input name="brand" placeholder="Brand" value={formData.brand} onChange={handleChange} /></label>
             </div>
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem', display:`${formData.showCustomText===true?'block':'none'}`}}>
               <label>Custom Text: <input name="customText" placeholder="Custom text" value={formData.customText} onChange={handleChange} /></label>
             </div>
           </div>
+          <div style={{ marginBottom: '1rem' }}>
+              <label>Amount*: <input name="amount" required={true} placeholder="Amount" type='number' value={formData.amount} onChange={handleChange} /></label>
+            </div>
           <div style={{ display: 'flex', gap: '1em' }}>
             <div style={{ marginBottom: '1rem' }}>
               <label>
@@ -433,11 +457,11 @@ function App() {
                 <input type="checkbox" name="showSize" checked={formData.showSize} onChange={handleChange} /> Include Size
               </label>
             </div>
-            <div style={{ marginBottom: '1rem' }}>
+            {/* <div style={{ marginBottom: '1rem' }}>
               <label>
                 <input type="checkbox" name="showExpirationDate" checked={formData.showExpirationDate} onChange={handleChange} /> Include Expiration Date
               </label>
-            </div>
+            </div> */}
             <div style={{ marginBottom: '1rem' }}>
               <label>
                 <input type="checkbox" name="showCountry" checked={formData.showCountry} onChange={handleChange} /> Include Country
@@ -450,17 +474,22 @@ function App() {
             </div>
             <div style={{ marginBottom: '1rem' }}>
               <label>
+                <input type="checkbox" name="showCustomText" checked={formData.showCustomText} onChange={handleChange} /> Include Custom Text
+              </label>
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <label>
                 <input type="checkbox" name="showEac" checked={formData.showEac} onChange={handleChange} /> Include EAC Mark
               </label>
             </div>
             <div style={{ marginBottom: '1rem' }}>
               <label>
-                <input type="checkbox" name="showNoReturn" checked={formData.showNoReturn} onChange={handleChange} /> Include "No Return" Text
+                <input type="checkbox" name="showNoReturn" checked={formData.showNoReturn} onChange={handleChange} /> Include "The product is not subject to mandatory certification" Text
               </label>
             </div>
           </div>
           <div style={{ marginBottom: '1rem' }}>
-            <label>SVG Logo: <input type="file" name="logo" accept="image/svg+xml" onChange={handleChange} /></label>
+            <label>SVG Logo: <input type="file" name="logo" accept="image/svg+xmimage/svg+xml" onChange={handleChange} /></label>
           </div>
           {formData.logo && (
             <div style={{ marginBottom: '1rem' }}>
@@ -471,7 +500,9 @@ function App() {
             <label>Frame: </label>
             <select name="frame" value={formData.frame} onChange={handleChange}>
               {frameOptions.map((option, index) => (
-                <option key={index} value={option.value}>
+                <option key={index} value={option.value} 
+                // style={{fontFamily:`./fonts/${option.value}.ttf`}}
+                >
                   {option.label}
                 </option>
               ))}
@@ -479,9 +510,9 @@ function App() {
           </div>
           <div style={{ marginBottom: '1rem' }}>
             <label>Font: </label>
-            <select name="font" value={formData.font} onChange={handleChange}>
+            <select name="font" value={formData.font} style={{ fontFamily:formData.font.replace('.ttf','').replace(/\b\w/g, c => c.toUpperCase()) }} onChange={handleChange}>
               {fontOptions.map((option, index) => (
-                <option key={index} value={option.value}>
+                <option key={index} value={option.value} style={{ fontFamily: option.label }}>
                   {option.label}
                 </option>
               ))}
@@ -538,6 +569,7 @@ function App() {
               alt="Logo"
               style={{
                 width: `${formData.logoWidth * 3.7795275591}px`,
+
                 position: 'absolute',
                 left: `${(formData.logoXPercent * formData.widthMm * 3.7795275591) / 100}px`,
                 bottom: `${(formData.logoYPercent * formData.heightMm * 3.7795275591) / 100}px`,
