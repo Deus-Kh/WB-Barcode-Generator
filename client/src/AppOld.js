@@ -40,7 +40,7 @@ function App() {
     country: '',
     brand: '',
     customText: '',
-    
+
     showArticle: true,
     showSeller: true,
     showColor: true,
@@ -48,7 +48,7 @@ function App() {
     // showExpirationDate: true,
     showCountry: false,
     showBrand: false,
-    showCustomText:false,
+    showCustomText: false,
     showEac: false,
     showNoReturn: false,
     logo: null,
@@ -87,18 +87,18 @@ function App() {
         const fonts = await res.json();
         setFontOptions(fonts);
         for (const font of fonts) {
-      try {
-        // console.log("FONT:::",`url(${REACT_APP_SERVER_URL}/fonts/${font.value})`);
-        
-        const fontFace = new FontFace(font.label, `url(${REACT_APP_SERVER_URL}/fonts/${font.value})`);
-        await fontFace.load();
-        // console.log("FontFace", font);
-        
-        document.fonts.add(fontFace);
-      } catch (fontErr) {
-        console.error(`Failed to load font ${font.name}:`, fontErr);
-      }
-    }
+          try {
+            // console.log("FONT:::",`url(${REACT_APP_SERVER_URL}/fonts/${font.value})`);
+
+            const fontFace = new FontFace(font.label, `url(${REACT_APP_SERVER_URL}/fonts/${font.value})`);
+            await fontFace.load();
+            // console.log("FontFace", font);
+
+            document.fonts.add(fontFace);
+          } catch (fontErr) {
+            console.error(`Failed to load font ${font.name}:`, fontErr);
+          }
+        }
       } catch (err) {
         setError(`Error loading fonts: ${err.message}`);
       }
@@ -106,7 +106,7 @@ function App() {
     fetchFrames();
     fetchFonts();
   }, []);
-  
+
 
   // Live Preview рендеринг
   useEffect(() => {
@@ -156,9 +156,9 @@ function App() {
       // if (formData.showExpirationDate === true && formData.expirationDate) lines.push(`Expiration date: ${formData.expirationDate}`);
       if (formData.showCountry === true && formData.country) lines.push(`Country: ${formData.country}`);
       if (formData.showBrand === true && formData.brand) lines.push(`Brand: ${formData.brand}`);
-      if (formData.showCustomText===true&&formData.customText) lines.push(formData.customText);
+      if (formData.showCustomText === true && formData.customText) lines.push(formData.customText);
       if (formData.showNoReturn === true) lines.push('Товар не подлежит обязательной сертификации');
-      
+
 
       const lineCount = lines.length;
       const marginTop = Math.min(9, Math.max(2, formData.heightMm / (lineCount + 2)));
@@ -213,7 +213,7 @@ function App() {
       // if ( formData.expirationDate) lines.push(`Expiration date: ${formData.expirationDate}`);
       if (formData.showCountry === true && formData.country) lines.push(`Country: ${formData.country}`);
       if (formData.showBrand === true && formData.brand) lines.push(`Brand: ${formData.brand}`);
-      if (formData.showCustomText===true&&formData.customText) lines.push(formData.customText);
+      if (formData.showCustomText === true && formData.customText) lines.push(formData.customText);
       // console.log("barcodeBottomY:::", barcodeBottomY);
       if (formData.showNoReturn === true) lines.push('Товар не подлежит обязательной сертификации');
 
@@ -422,20 +422,20 @@ function App() {
             <div style={{ marginBottom: '1rem' }}>
               <label>Seller: <input name="seller" placeholder="Seller" value={formData.seller} onChange={handleChange} /></label>
             </div>
-            
-            <div style={{ marginBottom: '1rem', display:`${formData.showCountry===true?'block':'none'}` }}  >
+
+            <div style={{ marginBottom: '1rem', display: `${formData.showCountry === true ? 'block' : 'none'}` }}  >
               <label>Country: <input name="country" placeholder="Country" value={formData.country} onChange={handleChange} /></label>
             </div>
-            <div style={{ marginBottom: '1rem',display:`${formData.showBrand===true?'block':'none'}` }}>
+            <div style={{ marginBottom: '1rem', display: `${formData.showBrand === true ? 'block' : 'none'}` }}>
               <label>Brand: <input name="brand" placeholder="Brand" value={formData.brand} onChange={handleChange} /></label>
             </div>
-            <div style={{ marginBottom: '1rem', display:`${formData.showCustomText===true?'block':'none'}`}}>
+            <div style={{ marginBottom: '1rem', display: `${formData.showCustomText === true ? 'block' : 'none'}` }}>
               <label>Custom Text: <input name="customText" placeholder="Custom text" value={formData.customText} onChange={handleChange} /></label>
             </div>
           </div>
           <div style={{ marginBottom: '1rem' }}>
-              <label>Amount*: <input name="amount" required={true} placeholder="Amount" type='number' value={formData.amount} onChange={handleChange} /></label>
-            </div>
+            <label>Amount*: <input name="amount" required={true} placeholder="Amount" type='number' value={formData.amount} onChange={handleChange} /></label>
+          </div>
           <div style={{ display: 'flex', gap: '1em' }}>
             <div style={{ marginBottom: '1rem' }}>
               <label>
@@ -500,7 +500,7 @@ function App() {
             <label>Frame: </label>
             <select name="frame" value={formData.frame} onChange={handleChange}>
               {frameOptions.map((option, index) => (
-                <option key={index} value={option.value} 
+                <option key={index} value={option.value}
                 // style={{fontFamily:`./fonts/${option.value}.ttf`}}
                 >
                   {option.label}
@@ -510,7 +510,7 @@ function App() {
           </div>
           <div style={{ marginBottom: '1rem' }}>
             <label>Font: </label>
-            <select name="font" value={formData.font} style={{ fontFamily:formData.font.replace('.ttf','').replace(/\b\w/g, c => c.toUpperCase()) }} onChange={handleChange}>
+            <select name="font" value={formData.font} style={{ fontFamily: formData.font.replace('.ttf', '').replace(/\b\w/g, c => c.toUpperCase()) }} onChange={handleChange}>
               {fontOptions.map((option, index) => (
                 <option key={index} value={option.value} style={{ fontFamily: option.label }}>
                   {option.label}
