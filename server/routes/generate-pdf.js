@@ -1,25 +1,22 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const sharp = require('sharp');
-// const pdfBuilder = require('../services/test-pdfkit');
-const pdfBuilder = require('../services/pdfBuilderNew');
-const dotenv = require('dotenv')
+const sharp = require("sharp");
 
-dotenv.config()
-const baseURL= process.env.BASE_URL||"http://localhost:3001"
-console.log("Base url",baseURL);
+const pdfBuilder = require("../services/pdfBuilderNew");
+const dotenv = require("dotenv");
 
-router.post('/', async (req, res) => {
-    try {
-        await pdfBuilder(req);
-        res.json({ url: `${baseURL}/product.pdf` });
+dotenv.config();
+const baseURL = process.env.BASE_URL || "http://localhost:3001";
+console.log("Base url", baseURL);
 
-    } catch (err) {
-        console.error('PDF generation error:', err.message, err.stack);
-        res.status(500).send(`PDF generation failed: ${err.message}`);
-    }
-}
-)
-
+router.post("/", async (req, res) => {
+  try {
+    await pdfBuilder(req);
+    res.json({ url: `${baseURL}/product.pdf` });
+  } catch (err) {
+    console.error("PDF generation error:", err.message, err.stack);
+    res.status(500).send(`PDF generation failed: ${err.message}`);
+  }
+});
 
 module.exports = router;
