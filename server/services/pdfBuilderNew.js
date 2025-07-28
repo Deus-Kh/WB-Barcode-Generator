@@ -122,12 +122,14 @@ module.exports = async function pdfBuilder(req) {
             Math.max(
               5,
               Math.min(
-                8.5,
+                8,
                 (labelHeightPt - barcodeDims.height - barcodeY) /
                   (linesLenght + 2)
               )
             )
           );
+          console.log("aviable",(labelHeightPt - barcodeDims.height - barcodeY) );
+          
     // const fontSize =   (labelHeightPt - barcodeY) / (lines.length + 3)
     // if (linesLenght>7&&heightMMNum <=40) {
     //     fontSize=5
@@ -136,8 +138,9 @@ module.exports = async function pdfBuilder(req) {
     //     fontSize=heightMMNum <= 35 ? 5:7
     // }
     doc.font(fontPath).fontSize(fontSize);
-
+console.log("font Size", fontSize);
     let textY = barcodeY + barcodeDims.height + fontSize / 2;
+    console.log("textY:", textY);
     lines.forEach((line) => {
       if (textY + fontSize < labelHeightPt) {
         doc.text(line, (labelWidthPt / 100) * 12, textY, {
@@ -151,7 +154,7 @@ module.exports = async function pdfBuilder(req) {
 
     if (showNoReturn === "true") {
       let noRet = [];
-      if (heightMMNum < 28) {
+      if (heightMMNum < 28||heightMMNum ==35) {
         noRet.push("Товар не подлежит ");
         noRet.push("обязательной ");
         noRet.push("сертификации");
@@ -163,10 +166,11 @@ module.exports = async function pdfBuilder(req) {
         noRet.forEach((noRetElem) => {
           doc.text(noRetElem, (labelWidthPt / 100) * 12, textY, {
             width: labelWidthPt * 0.55,
-            lineBreak: false,
+            // lineBreak: false,
             lineGap: 0,
+            paragraphGap :0
           });
-          textY += fontSize * 1;
+          textY += fontSize;
         });
       }
     }
