@@ -1,9 +1,3 @@
-const fs = require("fs");
-const fsPromises = fs.promises;
-const path = require("path");
-const sharp = require("sharp");
-
-const PDFDocument = require("pdfkit");
 const SVGtoPDF = require("svg-to-pdfkit");
 const mmToPt = (mm) => mm * 2.8346456693;
 

@@ -4,7 +4,7 @@ import './index.css';
 // import AppOld from './AppOld';
 // import App from './App';
 // import AppAI from './AppAI';
-import AppNew from './AppNew'
+import App from './App'
 import reportWebVitals from './reportWebVitals';
 // import dotenv from 'dotenv';
 
@@ -13,9 +13,7 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AppNew />
-    {/* <AppOld /> */}
-    {/* <AppAI /> */}
+    <App />
   </React.StrictMode>
 );
 

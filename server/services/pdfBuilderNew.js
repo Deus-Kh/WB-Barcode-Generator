@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const fsPromises = fs.promises;
 const path = require("path");
 const bwipjs = require("bwip-js");
 const PDFDocument = require("pdfkit");
@@ -128,7 +127,7 @@ module.exports = async function pdfBuilder(req) {
               )
             )
           );
-          console.log("aviable",(labelHeightPt - barcodeDims.height - barcodeY) );
+        
           
     // const fontSize =   (labelHeightPt - barcodeY) / (lines.length + 3)
     // if (linesLenght>7&&heightMMNum <=40) {
@@ -138,9 +137,7 @@ module.exports = async function pdfBuilder(req) {
     //     fontSize=heightMMNum <= 35 ? 5:7
     // }
     doc.font(fontPath).fontSize(fontSize);
-console.log("font Size", fontSize);
     let textY = barcodeY + barcodeDims.height + fontSize / 2;
-    console.log("textY:", textY);
     lines.forEach((line) => {
       if (textY + fontSize < labelHeightPt) {
         doc.text(line, (labelWidthPt / 100) * 12, textY, {
@@ -248,7 +245,9 @@ console.log("font Size", fontSize);
   doc.pipe(fs.createWriteStream(outPath));
 
   const barcodeSvg = generateBarcodeSVG().toString();
-
+  if (amount<1) {
+    amount=1
+  }
   if (paper === "thermal") {
     for (let i = 0; i < amount; i++) {
       renderLabel(doc, 0, 0, barcodeSvg);

@@ -19,7 +19,8 @@ export const pageSizes = [
 ];
 
 export const handleChange = (e, formData, setFormData, setError, setLogoPreview) => {
-  const { name, value, type, checked, files } = e.target;
+  const {id, name, value, type, checked, files } = e.target;
+  
   if (type === 'checkbox') {
     setFormData({ ...formData, [name]: checked });
   } else if (type === 'file') {
@@ -30,14 +31,22 @@ export const handleChange = (e, formData, setFormData, setError, setLogoPreview)
     setFormData({ ...formData, [name]: files[0], logoXPercent: 0, logoYPercent: 0 });
     setLogoPreview(files[0] ? URL.createObjectURL(files[0]) : null);
   } else if (name === 'pageSize') {
+    console.log("pageSize",);
+    
     const [widthMm, heightMm] = value.split('x');
     setFormData({ ...formData, widthMm: parseFloat(widthMm), heightMm: parseFloat(heightMm), logoXPercent: 0, logoYPercent: 0 });
   } else if (name === 'logoWidth') {
     const logoWidth = parseFloat(value) || 10;
     setFormData({ ...formData, logoWidth: Math.max(5, Math.min(logoWidth, formData.widthMm)) });
-  } else {
+  } 
+  // else if (type === 'number') {
+    
+  //   setFormData({ ...formData, [name]: value<1?1:Math.floor(value) });
+  // }
+  else {
     setFormData({ ...formData, [name]: value });
   }
+  
 };
 
 export const handleDragOver = (e) => {
@@ -74,6 +83,8 @@ export const handleSubmit = async (e, isPreview, formData, setError, setIsLoadin
   }
   if (!formData.widthMm || formData.widthMm <= 0) {
     setError('Width must be a positive number');
+    console.log("WIDTHHH:",formData.widthMm);
+    
     setIsLoading(false);
     return;
   }
@@ -82,7 +93,11 @@ export const handleSubmit = async (e, isPreview, formData, setError, setIsLoadin
     setIsLoading(false);
     return;
   }
-
+  if (!formData.amount || formData.amount <= 0||!Number.isInteger(formData.amount)) {
+    setError('Amount must be a positive integer number');
+    setIsLoading(false);
+    return;
+  }
   const data = new FormData();
   for (let key in formData) {
     if (formData[key] instanceof File) {
@@ -115,3 +130,5 @@ export const handleSubmit = async (e, isPreview, formData, setError, setIsLoadin
     setIsLoading(false);
   }
 };
+
+
