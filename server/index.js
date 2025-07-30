@@ -27,7 +27,8 @@ const upload = multer({
   },
 });
 
-app.use(cors());
+
+// app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
@@ -43,6 +44,12 @@ app.use("/fonts", fonts);
 const generatePDF = require("./routes/generate-pdf");
 app.use("/generate-pdf", upload.single("logo"), generatePDF);
 
+const clientBuildPath = path.join(__dirname, "../client/build");
+app.use(express.static(clientBuildPath));
+// app.use(express.static(path.join(__dirname, 'public')));
+// app.get("/*", (req, res) => {
+//   res.sendFile(path.join(clientBuildPath, "/index.html"));
+// });
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );

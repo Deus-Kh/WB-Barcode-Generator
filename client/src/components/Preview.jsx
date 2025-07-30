@@ -24,7 +24,7 @@ const Preview = ({ formData, logoPreview, previewUrl, setFormData }) => {
       new Promise((resolve) => {
         if (formData.frame === "None") return resolve();
         const frameImg = new Image();
-        frameImg.src = `${process.env.REACT_APP_SERVER_URL}/frames/${formData.frame}`;
+        frameImg.src = `/frames/${formData.frame}`;
         frameImg.onload = () => {
           ctx.drawImage(frameImg, 0, 0, widthPx, heightPx);
           resolve();

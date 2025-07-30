@@ -116,7 +116,7 @@ export const handleSubmit = async (e, isPreview, formData, setError, setIsLoadin
   }
 
   try {
-    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/generate-pdf`, {
+    const res = await fetch(`/generate-pdf`, {
       method: 'POST',
       body: data,
     });

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { handleChange, handleSubmit } from '../../utils';
 import styles from './index.module.css';
 
-const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 const BarcodeForm = ({
   formData,
@@ -24,7 +23,7 @@ const BarcodeForm = ({
   useEffect(() => {
     const fetchFrames = async () => {
       try {
-        const res = await fetch(`${REACT_APP_SERVER_URL}/frames`);
+        const res = await fetch(`/frames`);
         if (!res.ok) throw new Error('Failed to load frames');
         const frames = await res.json();
         setFrameOptions(frames);
@@ -34,13 +33,13 @@ const BarcodeForm = ({
     };
     const fetchFonts = async () => {
       try {
-        const res = await fetch(`${REACT_APP_SERVER_URL}/fonts`);
+        const res = await fetch(`/fonts`);
         if (!res.ok) throw new Error('Failed to load fonts');
         const fonts = await res.json();
         setFontOptions(fonts);
         for (const font of fonts) {
           try {
-            const fontFace = new FontFace(font.label, `url(${REACT_APP_SERVER_URL}/fonts/${font.value})`);
+            const fontFace = new FontFace(font.label, `url(/fonts/${font.value})`);
             await fontFace.load();
             document.fonts.add(fontFace);
           } catch (fontErr) {
