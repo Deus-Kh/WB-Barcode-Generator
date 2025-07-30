@@ -171,6 +171,10 @@ const Preview = ({ formData, logoPreview, previewUrl, setFormData }) => {
     //   console.log("textY:", textY);
 
       function wrapText(text, x, y, maxWidth) {
+        if (text.match('Size:')) {
+          ctx.fillText(text, x, y);
+          return
+        }
         const words = text.split(" ");
         let line = "";
 

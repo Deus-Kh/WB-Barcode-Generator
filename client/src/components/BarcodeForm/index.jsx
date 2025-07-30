@@ -63,42 +63,43 @@ const BarcodeForm = ({
           <label>Barcode Type: 
             <select name="barcodeType" value={formData.barcodeType} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)}>
             <option value="code128">Code128</option>
-            <option value="ean13">EAN-13</option>
-            <option value="ean8">EAN-8</option>
-            <option value="upc">UPC</option>
+            <option value="ean13" disabled>EAN-13</option>
+            <option value="ean8" disabled>EAN-8</option>
+            <option value="upc" disabled>UPC</option>
           </select>
           </label>
           
         </div>
         <div  className={styles.formItem}>
-          <label>Barcode Value: <input name="barcodeValue" type='text'  value={formData.barcodeValue} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} required /></label>
+          <label>Barcode Value: <input name="barcodeValue" pattern="[ -~]{1,48}" maxlength="48" type='text'  value={formData.barcodeValue} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} required /></label>
         </div>
         <div  className={styles.formItem}>
-          <label>Article: <input name="article" type='text'  value={formData.article} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Article: <input name="article" type='text' maxLength={14} value={formData.article} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} required /></label>
         </div>
         <div  className={styles.formItem}>
-          <label>Color: <input name="color" type='text'  value={formData.color} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Product Name: <input name="productName" maxLength={24} type='text'  value={formData.productName} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} required /></label>
         </div>
         <div  className={styles.formItem}>
-          <label>Size: <input name="size" type='text'  value={formData.size} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Color: <input name="color" type='text' maxLength={10} value={formData.color} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
         </div>
         <div  className={styles.formItem}>
-          <label>Product Name: <input name="productName" type='text'  value={formData.productName} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Size: <input name="size" type='text' maxLength={10}  value={formData.size} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
         </div>
+        
         <div  className={styles.formItem}>
-          <label>Seller: <input name="seller" type='text'  value={formData.seller} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Seller: <input name="seller" type='text' maxLength={25} value={formData.seller} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
         </div>
         <div className={styles.formItem} style={{  display: formData.showCountry ? 'block' : 'none' }}>
-          <label>Country: <input name="country" type='text'  value={formData.country} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Country: <input name="country" maxLength={13} type='text'  value={formData.country} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
         </div>
         <div className={styles.formItem} style={{  display: formData.showBrand ? 'block' : 'none' }}>
-          <label>Brand: <input name="brand" type='text'  value={formData.brand} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Brand: <input name="brand" maxLength={15} type='text'  value={formData.brand} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
         </div>
         <div className={styles.formItem} style={{  display: formData.showCustomText ? 'block' : 'none' }}>
-          <label>Custom Text: <input name="customText" type='text'  value={formData.customText} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Custom Text: <input name="customText"  maxLength={25} type='text'  value={formData.customText} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
         </div>
         <div className={styles.formItem} >
-          <label>Amount: <input name="amount" required  type="number" min={1} step={1} value={formData.amount} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
+          <label>Amount: <input name="amount"  required  type="number" min={1} step={1} value={formData.amount} onChange={(e) => handleChange(e, formData, setFormData, setError, setLogoPreview)} /></label>
         </div>
         <div className={styles.checkBoxGroup} >
           <div >

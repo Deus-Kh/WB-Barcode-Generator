@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  
 }
 
 .App-logo {
@@ -28,11 +29,30 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+
+
+
+.main{
+  --myFlexBasis:50%;
+  display: flex;
+  
+
+  &>div{
+    flex: 1 1 var(--myFlexBasis);
+    padding: 2em;
+    box-sizing: border-box;
   }
-  to {
-    transform: rotate(360deg);
+
+}
+
+
+@media screen and (max-width:720px) {
+  .main{
+    --myFlexBasis:100%;
+    flex-wrap: wrap-reverse;
+
+    & > .checkBoxGroup{
+      height: fit-content !important;
+    }
   }
 }

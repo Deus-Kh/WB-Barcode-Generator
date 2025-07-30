@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {BarcodeForm,Preview} from './components';
 import { pageSizes } from './utils';
-
+import styles from './App.module.css';
 function App() {
   const [formData, setFormData] = useState({
     barcodeType: 'code128',
@@ -42,8 +42,8 @@ function App() {
   const [logoPreview, setLogoPreview] = useState(null);
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', display: 'flex', gap: '2rem' }}>
-      <div style={{ flex: 1 }}>
+    <div className={styles.main}>
+      <div >
         <h1>PDF Generator</h1>
         {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
         <BarcodeForm
@@ -65,12 +65,14 @@ function App() {
         />
         
       </div>
-      <Preview
+      <div>
+        <Preview
         formData={formData}
         logoPreview={logoPreview}
         previewUrl={previewUrl}
         setFormData={setFormData}
       />
+      </div>
     </div>
   );
 }

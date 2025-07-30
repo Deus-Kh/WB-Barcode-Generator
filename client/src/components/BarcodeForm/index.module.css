@@ -12,7 +12,7 @@
 
 *{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-    --myFlexBasis:50%;
+    /* --myFlexBasis:50%; */
 }
 
 
@@ -196,6 +196,7 @@ select {
 
 
     &>option {
+        cursor: pointer;
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -217,6 +218,10 @@ select {
         &:last-of-type {
             border-radius: 0 0 8px 8px;
         }
+        &:disabled{
+            opacity: 0.5;
+            background: rgb(200, 200, 200);
+        }
     }
 
 }
@@ -231,6 +236,7 @@ button{
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
     outline: none;
         font-size: 14px;
+        min-width: fit-content;
     height: 32px;
     padding: 0px 15px;
     border-radius: 6px;
@@ -283,4 +289,12 @@ button{
     justify-content: space-between;
 
    
+}
+
+@media screen and (max-width:780px) {
+  
+   .checkBoxGroup{
+      height: fit-content !important;
+    }
+  
 }

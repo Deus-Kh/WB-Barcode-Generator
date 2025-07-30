@@ -19,7 +19,7 @@ export const pageSizes = [
 ];
 
 export const handleChange = (e, formData, setFormData, setError, setLogoPreview) => {
-  const {id, name, value, type, checked, files } = e.target;
+  const { name, value, type, checked, files } = e.target;
   
   if (type === 'checkbox') {
     setFormData({ ...formData, [name]: checked });
@@ -81,10 +81,18 @@ export const handleSubmit = async (e, isPreview, formData, setError, setIsLoadin
     setIsLoading(false);
     return;
   }
+  if (!formData.article) {
+    setError('Article value is required');
+    setIsLoading(false);
+    return;
+  }
+  if (!formData.productName) {
+    setError('Product name value is required');
+    setIsLoading(false);
+    return;
+  }
   if (!formData.widthMm || formData.widthMm <= 0) {
     setError('Width must be a positive number');
-    console.log("WIDTHHH:",formData.widthMm);
-    
     setIsLoading(false);
     return;
   }
