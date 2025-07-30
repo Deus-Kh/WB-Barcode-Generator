@@ -222,7 +222,7 @@ WB-Barcode-Generator/
 Create a `.env` file in the `server` directory with the following:
 
 ```
-BASE_URL=`your-domain.com`||http://localhost:3001
+BASE_URL=`your-domain.com`
 SERVER_PORT=3001
 NODE_ENV=production
 ```
